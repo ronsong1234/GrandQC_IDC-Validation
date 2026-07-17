@@ -96,7 +96,9 @@ python src/compare_masks.py \
 ## Notebooks
 
 Each notebook states its purpose, inputs, expected outputs, environment, runtime, and GPU
-need at the top, and exports results to CSV/JSON at the end.
+need at the top, and exports results to CSV/JSON at the end. Every notebook opens with an
+**Open in Colab** badge and self-bootstraps there (installs deps, clones this repo for
+`src/`, and pins the GrandQC fork to the validated commit) — no local setup needed.
 
 | Notebook | What it does | Status |
 |----------|--------------|--------|

@@ -216,3 +216,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---- GrandQC-IDC data policy: never commit heavy artifacts ----
+data/
+models/
+outputs/
+external/
+*.svs
+*.dcm
+*.pth
+*.tar
+*.tiff
+*.ome.tif
+# keep small illustrative outputs
+!results/example_outputs/**

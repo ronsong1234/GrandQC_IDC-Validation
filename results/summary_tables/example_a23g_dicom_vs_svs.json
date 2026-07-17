@@ -1,0 +1,10 @@
+{
+  "mask_a": "results/example_outputs/TCGA-AC-A23G_DICOM_mask.png",
+  "mask_b": "results/example_outputs/TCGA-AC-A23G_SVS_mask.png",
+  "whole_image_pct": 99.987,
+  "within_shared_tissue_pct": 99.9999,
+  "tissue_iou": 0.9997,
+  "tw_dice": 0.9999,
+  "macro_dice_absent_as_zero": 0.4198,
+  "macro_dice_present_only": 0.9795
+}

@@ -1,0 +1,36 @@
+# GrandQC-IDC pipeline configuration.
+# These values define the "matched" comparison: identical for the DICOM and SVS arms so
+# that only the input format varies.
+
+grandqc:
+  fork_repo: "https://github.com/fedorov/grandqc.git"
+  fork_branch: "idc-dicom-wsidicom"          # wsidicom reader; fixes YBR_ICT (Finding 2)
+  scripts_subdir: "01_WSI_inference_OPENSLIDE_QC"
+
+models:
+  tissue:
+    filename: "Tissue_Detection_MPP10.pth"
+    zenodo_record: 14507273
+    mpp: 10.0                                 # ~1x, tissue detection
+  artifact:
+    filename: "GrandQC_MPP15.pth"
+    zenodo_record: 14041538
+    mpp: 1.5                                  # ~7x, artifact segmentation (recommended default)
+
+inference:
+  patch_size: 512
+  create_geojson: false
+  device: "auto"                              # cuda -> mps -> cpu (deterministic on cpu)
+
+reference:
+  zenodo_masks_record: 14041578               # secondary comparison only (provenance)
+  brca_archive: "BRCA.tar"
+
+mask_codebook:                                # see CODEBOOK.md (authoritative)
+  margin: 0
+  tissue_classes: [1, 2, 3, 4, 5, 6]
+  background: 7
+  tissue_detector: {tissue: 0, background: 1}  # NOTE inverted polarity vs artifact mask
+
+data_dir: "data"
+results_dir: "results"

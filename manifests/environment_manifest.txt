@@ -1,0 +1,12 @@
+# Pinned validation environment (deterministic; byte-identical reruns verified)
+python===3.13.14
+torch==2.12.1+cpu
+segmentation-models-pytorch==0.3.1
+numpy==2.4.2
+pillow==12.2.0
+opencv-python==4.13.0
+openslide-python==1.4.6
+libopenslide==4.0.1
+wsidicom==0.31.0
+pydicom==3.0.2
+device=cpu

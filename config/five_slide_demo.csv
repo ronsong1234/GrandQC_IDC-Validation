@@ -1,0 +1,6 @@
+tcga_barcode,magnification,transfer_syntax,photometric,role
+TCGA-AC-A23G-01Z-00-DX1,40x,JPEG 2000,YBR_ICT,large-rim
+TCGA-AC-A23C-01Z-00-DX1,40x,JPEG 2000,YBR_ICT,large-rim
+TCGA-AC-A62V-01Z-00-DX1,40x,JPEG 2000,YBR_ICT,moderate-rim
+TCGA-MS-A51U-01Z-00-DX1,20x,JPEG Baseline,RGB,near-exact/RGB-JPEG
+TCGA-A8-A0AB-01Z-00-DX1,40x,JPEG 2000,RGB,near-exact/RGB-J2K

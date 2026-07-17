@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this validation framework, please cite it as below."
+title: "GrandQC-IDC: Reproducible Quality Control for DICOM Whole-Slide Images"
+abstract: >-
+  Validation and reproducibility framework for running GrandQC on NCI Imaging Data
+  Commons DICOM pathology slides via wsidicom, with matched-SVS computational
+  equivalence testing, a YBR_ICT decoding-safety analysis, and a Zenodo
+  reference-provenance investigation.
+type: software
+authors:
+  - given-names: Ronak
+    family-names: Singh
+    affiliation: "Georgetown University MS HIDS; Harvard Medical School (Fedorov Lab)"
+date-released: 2026-07-17
+license: MIT
+repository-code: "https://github.com/ronsong1234/GrandQC_IDC-Validation"
+keywords:
+  - digital pathology
+  - quality control
+  - DICOM
+  - whole-slide imaging
+  - NCI Imaging Data Commons
+  - GrandQC
+  - reproducibility
+references:
+  - type: article
+    title: "GrandQC: A comprehensive solution to quality control problem in digital pathology"
+    authors:
+      - family-names: Weng
+      - family-names: Tolkach
+    year: 2024
+    notes: "Nature Communications. Model checkpoints: Zenodo 14041538, 14507273. TCGA masks: Zenodo 14041578."

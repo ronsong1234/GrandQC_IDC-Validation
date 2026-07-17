@@ -1,0 +1,24 @@
+name: grandqc-idc
+channels: [conda-forge]
+dependencies:
+  - python=3.11
+  - pip
+  - openslide            # provides libopenslide (needed only for the .svs baseline arm)
+  - pip:
+      - idc-index
+      - wsidicom
+      - pydicom
+      - "segmentation-models-pytorch==0.3.1"   # pinned: model.predict() removed in 0.4.0
+      - torch
+      - openslide-python
+      - openslide-bin
+      - tifffile
+      - imagecodecs
+      - numpy
+      - pillow
+      - opencv-python
+      - matplotlib
+      - pandas
+      - pyyaml
+      - requests
+      - pytest

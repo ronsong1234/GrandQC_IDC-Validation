@@ -1,0 +1,26 @@
+diff --git a/01_WSI_inference_OPENSLIDE_QC/main.py b/01_WSI_inference_OPENSLIDE_QC/main.py
+index 10441d5..403bf70 100644
+--- a/01_WSI_inference_OPENSLIDE_QC/main.py
++++ b/01_WSI_inference_OPENSLIDE_QC/main.py
+@@ -19,7 +19,7 @@ Image.MAX_IMAGE_PIXELS = 1000000000
+ 
+ 
+ # DEVICE
+-DEVICE = 'cuda'
++DEVICE = 'cpu'
+ '''
+ 'cuda:0' - NVIDIA GPU card
+ 'mps'    - APPLE Silicon
+diff --git a/01_WSI_inference_OPENSLIDE_QC/wsi_tis_detect.py b/01_WSI_inference_OPENSLIDE_QC/wsi_tis_detect.py
+index 4b0fed9..35c0b5a 100644
+--- a/01_WSI_inference_OPENSLIDE_QC/wsi_tis_detect.py
++++ b/01_WSI_inference_OPENSLIDE_QC/wsi_tis_detect.py
+@@ -10,7 +10,7 @@ from wsi_tis_detect_helper_fx import get_preprocessing, make_class_map
+ 
+ 
+ # DEVICE
+-DEVICE = 'cuda'
++DEVICE = 'cpu'
+ '''
+ 'cuda' - NVIDIA GPU card
+ 'mps'    - APPLE Silicon

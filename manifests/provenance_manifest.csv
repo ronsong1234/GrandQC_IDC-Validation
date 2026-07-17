@@ -1,0 +1,7 @@
+artifact,description,sha256_or_value
+grandqc_authors_commit,cpath-ukk/grandqc VERSION:1 (2024-11-09),84f3fec
+idc_fork_branch,fedorov/grandqc,idc-dicom-wsidicom
+tissue_ckpt_strict_load,load_state_dict(strict=True),"missing=0 unexpected=0 (492 tensors, 6614533 params)"
+determinism,rerun same DICOM,np.array_equal=True (100.0000%)
+prov_5slide_mean_2024_vs_fork,tissue IoU,0.9941
+prov_5slide_mean_public_vs_zenodo,tissue IoU (rim slides ~0.78),0.86 overall

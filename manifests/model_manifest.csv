@@ -1,0 +1,3 @@
+filename,source,zenodo_record,sha256,architecture,mpp
+Tissue_Detection_MPP10.pth,Zenodo,14507273,0e3577628a553774419a5b87a2947531988e07175b9e1a8048f53b6188f4d76e,"smp.UnetPlusPlus(timm-efficientnet-b0), 2-class",10.0
+GrandQC_MPP15.pth,Zenodo,14041538,6e90ec8548d4050734c30e30d5ca7fe67e84b59b1dd8ae338447dad90bae4ff1,"smp.Unet (full pickled model), 8-class",1.5

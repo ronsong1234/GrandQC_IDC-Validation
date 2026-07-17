@@ -1,0 +1,5 @@
+comparison,tissue_IoU,rim_px_tissue_vs_zenodo_bg,tissue_frac
+authors_2024_code_vs_zenodo,0.7008,1293821,0.4363
+idc_fork_vs_zenodo,0.6986,1307163,0.4377
+authors_2024_vs_idc_fork,0.9955,-,-
+zenodo_reference,-,-,0.3058

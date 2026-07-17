@@ -5,6 +5,7 @@
 grandqc:
   fork_repo: "https://github.com/fedorov/grandqc.git"
   fork_branch: "idc-dicom-wsidicom"          # wsidicom reader; fixes YBR_ICT (Finding 2)
+  fork_commit: "1d9807be7b3a04de2f0cc5d799b55d9fd961f01e"  # validated commit (pin this, not the branch)
   scripts_subdir: "01_WSI_inference_OPENSLIDE_QC"
 
 models:

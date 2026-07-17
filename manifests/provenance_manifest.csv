@@ -1,6 +1,6 @@
 artifact,description,sha256_or_value
 grandqc_authors_commit,cpath-ukk/grandqc VERSION:1 (2024-11-09),84f3fec
-idc_fork_branch,fedorov/grandqc,idc-dicom-wsidicom
+idc_fork_branch,fedorov/grandqc idc-dicom-wsidicom,1d9807be7b3a04de2f0cc5d799b55d9fd961f01e
 tissue_ckpt_strict_load,load_state_dict(strict=True),"missing=0 unexpected=0 (492 tensors, 6614533 params)"
 determinism,rerun same DICOM,np.array_equal=True (100.0000%)
 prov_5slide_mean_2024_vs_fork,tissue IoU,0.9941

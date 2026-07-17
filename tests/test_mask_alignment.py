@@ -10,24 +10,30 @@ import numpy as np
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from utils import agreement  # noqa: E402
+from utils import MaskShapeMismatch, agreement  # noqa: E402
 
 
-def masks_shape(a, b):
-    return a.shape == b.shape
-
-
-def test_matched_run_must_share_dimensions():
-    # DICOM and SVS masks of the same slide MUST be identical-shape; a mismatch is a bug.
-    a = np.ones((3037, 3263), np.uint8)
-    b = np.ones((3037, 3263), np.uint8)
-    assert masks_shape(a, b), "matched-slide masks differ in shape -> investigate before trusting agreement"
-
-
-def test_shape_mismatch_is_detectable():
+def test_mismatched_shapes_raise_by_default():
+    # The primary SVS-DICOM comparison must NOT silently crop a size mismatch.
     a = np.ones((100, 100), np.uint8)
     b = np.ones((100, 90), np.uint8)
-    assert not masks_shape(a, b)
+    with pytest.raises(MaskShapeMismatch):
+        agreement(a, b)
+
+
+def test_allow_crop_opt_in_still_computes():
+    # The provenance experiment's historical-padding case may crop, on explicit opt-in.
+    a = np.ones((100, 100), np.uint8)
+    b = np.ones((100, 90), np.uint8)
+    with pytest.warns(UserWarning):
+        result = agreement(a, b, allow_crop=True)
+    assert result["whole_image"] == 100.0
+
+
+def test_matched_run_shares_dimensions():
+    a = np.ones((3037, 3263), np.uint8)
+    b = np.ones((3037, 3263), np.uint8)
+    assert agreement(a, b)["whole_image"] == 100.0  # same shape -> no raise
 
 
 def test_agreement_does_not_silently_upscale():

@@ -31,9 +31,14 @@ Stated plainly, because the project is about reproducibility and honest referenc
    and may have entirely different codec/photometric distributions. Do not generalize the
    rate; re-measure per collection with `src/inspect_dicom_headers.py`.
 
-6. **Scope of the equivalence numbers.** The headline 99.960 % / 99.988 % figures are from
-   the 5-slide validated set. The 22-slide stratified run (`05_stratified_validation.ipynb`)
-   is the intended confirmation at larger n; its results should be reported when complete.
+6. **Scope of the equivalence numbers.** The headline **99.957 % / 99.988 %** figures are
+   from the **5-slide** validated set (Notebook 02), computed by `src/utils.py`. The
+   22-slide stratified run (`05_stratified_validation.ipynb`) is the intended confirmation
+   at larger n but **has not yet been executed** — that notebook currently contains only
+   cohort-selection and setup outputs, not final cohort results. When run, its table goes to
+   `results/summary_tables/stratified_22_equivalence.csv` and this section is updated. No
+   slide is byte-identical *across formats* (closest 99.9995 %); byte-identity holds only for
+   a rerun of the *same* input (the determinism control).
 
 7. **CPU vs GPU.** Validated numbers were produced on CPU (deterministic). GPU inference can
    introduce small numerical differences in principle; the equivalence claim is made for the

@@ -13,9 +13,10 @@ RUN pip install --no-cache-dir -r requirements-lock.txt
 
 COPY . .
 
-# The IDC-patched GrandQC fork is fetched at build time (not vendored).
-RUN git clone --depth 1 --branch idc-dicom-wsidicom \
-        https://github.com/fedorov/grandqc.git external/grandqc
+# The IDC-patched GrandQC fork is fetched at build time (not vendored), pinned to the
+# validated commit rather than the moving branch head.
+RUN git clone https://github.com/fedorov/grandqc.git external/grandqc \
+    && git -C external/grandqc checkout 1d9807be7b3a04de2f0cc5d799b55d9fd961f01e
 
 # Sanity check: the data-free tests must pass in the image.
 RUN pytest tests/ -q

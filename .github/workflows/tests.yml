@@ -1,0 +1,23 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # The tests are lightweight and data-free — only numpy/pillow/pytest are needed.
+      # (The full pipeline env in requirements-lock.txt is not required to run tests/.)
+      - name: Install test dependencies
+        run: pip install numpy pillow pytest
+
+      - name: Run tests
+        run: pytest tests/ -q

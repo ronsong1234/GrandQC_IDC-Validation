@@ -1,5 +1,7 @@
 # GrandQC-IDC: Reproducible Quality Control for DICOM Whole-Slide Images
 
+[![tests](https://github.com/ronsong1234/GrandQC_IDC-Validation/actions/workflows/tests.yml/badge.svg)](https://github.com/ronsong1234/GrandQC_IDC-Validation/actions/workflows/tests.yml)
+
 Validation and reproducibility framework for running [GrandQC](https://github.com/cpath-ukk/grandqc)
 on NCI Imaging Data Commons (IDC) DICOM pathology slides via `wsidicom`, with matched-SVS
 comparisons, a YBR_ICT decoding-safety analysis, and a Zenodo reference-provenance
@@ -14,9 +16,11 @@ investigation.
 
 1. **SVS–DICOM equivalence.** Running the identical GrandQC pipeline (same code, weights,
    MPP) on IDC DICOM and on the original GDC SVS produces masks that agree at
-   **99.960 % whole-image** and **99.988 % within shared tissue** (ΔTW-Dice 0.0002; one
-   slide byte-identical). Inference is deterministic (verified `np.array_equal` on rerun),
-   so this is a real — and negligible — codec-level difference, not noise.
+   **99.957 % whole-image** and **99.988 % within shared tissue** (mean tissue-weighted
+   Dice 0.9996 between the two formats; 5-slide set, computed by `src/utils.py`). Inference
+   is deterministic — GrandQC rerun on the *same* input is **byte-identical**
+   (`np.array_equal == True`) — so the tiny SVS-vs-DICOM difference is a real, negligible
+   codec-level effect (±1 grey-level decode floor), not run-to-run noise.
 
 2. **YBR_ICT decoding issue.** IDC serves some TCGA slides as JPEG 2000 **YBR_ICT**.
    OpenSlide 4.0.1 opens these without error but silently fails to apply the color
@@ -60,9 +64,10 @@ because the public GrandQC release does not reproduce them (Finding 3).
 conda env create -f environment.yml && conda activate grandqc-idc
 # or: pip install -r requirements-lock.txt
 
-# clone the IDC-patched GrandQC fork used by the run scripts
-git clone --depth 1 --branch idc-dicom-wsidicom \
-    https://github.com/fedorov/grandqc.git external/grandqc
+# clone the IDC-patched GrandQC fork used by the run scripts, PINNED to the
+# validated commit (the branch is a moving target; the commit is what was tested)
+git clone https://github.com/fedorov/grandqc.git external/grandqc
+git -C external/grandqc checkout 1d9807be7b3a04de2f0cc5d799b55d9fd961f01e
 
 pytest tests/ -q            # 19 tests, ~0.2 s, no data required
 ```
@@ -93,13 +98,18 @@ python src/compare_masks.py \
 Each notebook states its purpose, inputs, expected outputs, environment, runtime, and GPU
 need at the top, and exports results to CSV/JSON at the end.
 
-| Notebook | What it does |
-|----------|--------------|
-| `01_idc_experiment.ipynb` | IDC acquisition + DICOM processing through GrandQC |
-| `02_svs_dicom_validation.ipynb` | Matched SVS–DICOM validation (primary result) + determinism control |
-| `03_ybr_ict_prevalence.ipynb` | YBR_ICT prevalence via DICOM-header range reads |
-| `04_reference_provenance.ipynb` | Zenodo provenance reconstruction with the authors' 2024 code |
-| `05_stratified_validation.ipynb` | 22-slide stratified validation across codec/scanner/magnification |
+| Notebook | What it does | Status |
+|----------|--------------|--------|
+| `01_idc_experiment.ipynb` | IDC acquisition + DICOM processing through GrandQC | ✅ Complete |
+| `02_svs_dicom_validation.ipynb` | Matched SVS–DICOM validation (primary result) + determinism control | ✅ Complete (5 slides) |
+| `03_ybr_ict_prevalence.ipynb` | YBR_ICT prevalence via DICOM-header range reads | ✅ Complete |
+| `04_reference_provenance.ipynb` | Zenodo provenance reconstruction with the authors' 2024 code | ✅ Complete |
+| `05_stratified_validation.ipynb` | 22-slide stratified validation across codec/scanner/magnification | ⏳ **Pending 22-slide run** — cohort wired, setup cells only; not yet executed at full n |
+
+> **On outputs.** Notebook 05's saved cells are *setup* (cohort selection, download
+> plumbing), **not** final 22-slide cohort results — that run has not been executed. The
+> headline equivalence numbers come from the 5-slide set (Notebook 02). See
+> `docs/limitations.md` §6.
 
 ---
 

@@ -6,20 +6,25 @@ come from the validated demo set; the header sweep covers all 1,104 TCGA-BRCA DX
 ## 1. SVS–DICOM computational equivalence
 
 Running the identical GrandQC pipeline (same fork commit, same published weights, MPP 1.5,
-same 512 patches) on IDC DICOM vs the original GDC SVS:
+same 512 patches) on IDC DICOM vs the original GDC SVS. All values computed by
+`src/utils.py` (the canonical metric implementation); reproduced in
+`results/summary_tables/five_slide_equivalence.csv`.
 
-| Slide | Photometric | Whole-image | Within-shared-tissue |
-|-------|-------------|------------:|---------------------:|
-| TCGA-A8-A0AB | RGB (J2K) | 100.000 % | 100.000 % |
-| TCGA-AC-A23C | YBR_ICT | 99.937 % | 99.971 % |
-| TCGA-AC-A23G | YBR_ICT | 99.990 % | 100.000 % |
-| TCGA-AC-A62V | YBR_ICT | 99.916 % | 99.968 % |
-| TCGA-MS-A51U | RGB | 99.959 % | 100.000 % |
-| **mean** | | **99.960 %** | **99.988 %** |
+| Slide | Photometric | Whole-image | Within-shared-tissue | TW-Dice |
+|-------|-------------|------------:|---------------------:|--------:|
+| TCGA-A8-A0AB | RGB (J2K) | 99.9995 % | 100.0000 % | 1.0000 |
+| TCGA-AC-A23C | YBR_ICT | 99.9290 % | 99.9706 % | 0.9995 |
+| TCGA-AC-A23G | YBR_ICT | 99.9870 % | 99.9999 % | 0.9999 |
+| TCGA-AC-A62V | YBR_ICT | 99.9123 % | 99.9678 % | 0.9992 |
+| TCGA-MS-A51U | RGB | 99.9561 % | 100.0000 % | 0.9995 |
+| **mean** | | **99.957 %** | **99.988 %** | **0.9996** |
+
+No slide is *byte-identical* across formats (the closest, TCGA-A8-A0AB, is 99.9995 %);
+byte-identity holds only for a rerun of the *same* input (determinism control below).
 
 **Determinism control.** GrandQC rerun on the identical DICOM produces a byte-identical
-mask (`np.array_equal == True`, 100.0000 %). So the ~0.01 % SVS–DICOM difference is a real
-codec-level effect, not run-to-run noise.
+mask (`np.array_equal == True`, 100.0000 %). So the ~0.04 % mean SVS–DICOM difference is a
+real codec-level effect, not run-to-run noise.
 
 **Decode floor.** Decoding the same level-0 region from the SVS and the DICOM differs by at
 most **±1 grey level** everywhere — the two inputs reach GrandQC nearly pixel-identical.

@@ -1,23 +1,25 @@
-# Exact versions of the pinned validation environment (see manifests/environment_manifest.txt).
+# Fully pinned versions of the validated environment (see manifests/environment_manifest.txt).
+# Every package that participated in the validation run is pinned to an exact version.
+#
 # Interpreter and system library (NOT pip-installable) — recorded for reproducibility:
 #   python==3.13.14
-#   libopenslide==4.0.1   (install via conda-forge `openslide` or an OS package)
+#   libopenslide==4.0.1   (bundled by openslide-bin below; or install via conda-forge / OS)
 #
-# torch is recorded as the CPU build actually used; swap for a CUDA build on GPU.
+# torch is the CPU build actually used; swap for a matching CUDA build on GPU.
 torch==2.12.1
 segmentation-models-pytorch==0.3.1
 numpy==2.4.2
 pillow==12.2.0
 opencv-python==4.13.0
 openslide-python==1.4.6
-openslide-bin
+openslide-bin==4.0.1.2
 wsidicom==0.31.0
 pydicom==3.0.2
-idc-index
-imagecodecs
-tifffile
-matplotlib
-pandas
-pyyaml
-requests
-pytest
+idc-index==0.12.3
+imagecodecs==2026.6.6
+tifffile==2026.6.1
+matplotlib==3.11.0
+pandas==2.2.3
+pyyaml==6.0.3
+requests==2.34.2
+pytest==9.1.1

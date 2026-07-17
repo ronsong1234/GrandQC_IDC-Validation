@@ -13,13 +13,20 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from utils import colorize, load_mask, tissue_iou, tissue_mask
+from utils import MaskShapeMismatch, colorize, load_mask, tissue_iou, tissue_mask
 
 
-def figure(path_a, path_b, out, label_a, label_b):
+def figure(path_a, path_b, out, label_a, label_b, allow_crop=False):
     a, b = load_mask(path_a), load_mask(path_b)
-    h, w = min(a.shape[0], b.shape[0]), min(a.shape[1], b.shape[1])
-    a, b = a[:h, :w], b[:h, :w]
+    if a.shape != b.shape:
+        if not allow_crop:
+            raise MaskShapeMismatch(
+                f"mask shapes differ: {a.shape} vs {b.shape}. Pass --allow-common-crop "
+                f"only for the known padding case."
+            )
+        h, w = min(a.shape[0], b.shape[0]), min(a.shape[1], b.shape[1])
+        print(f"  cropping to common ({h}, {w}): dropped a={a.shape}->{h,w}, b={b.shape}->{h,w}")
+        a, b = a[:h, :w], b[:h, :w]
     ta, tb = tissue_mask(a), tissue_mask(b)
     ys, xs = np.where(ta | tb)
     if len(ys):
@@ -54,8 +61,11 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--label-a", default="A")
     p.add_argument("--label-b", default="B")
+    p.add_argument("--allow-common-crop", action="store_true",
+                   help="crop to the common shape instead of erroring on a size mismatch")
     args = p.parse_args()
-    figure(args.mask_a, args.mask_b, args.out, args.label_a, args.label_b)
+    figure(args.mask_a, args.mask_b, args.out, args.label_a, args.label_b,
+           allow_crop=args.allow_common_crop)
 
 
 if __name__ == "__main__":

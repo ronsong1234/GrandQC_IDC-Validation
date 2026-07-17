@@ -1,24 +1,26 @@
+# Portable installer. Python matches the validated environment (3.13); for an exact
+# byte-for-byte reproduction use requirements-lock.txt instead.
 name: grandqc-idc
 channels: [conda-forge]
 dependencies:
-  - python=3.11
+  - python=3.13
   - pip
   - openslide            # provides libopenslide (needed only for the .svs baseline arm)
   - pip:
-      - idc-index
-      - wsidicom
-      - pydicom
+      - idc-index==0.12.3
+      - wsidicom==0.31.0
+      - pydicom==3.0.2
       - "segmentation-models-pytorch==0.3.1"   # pinned: model.predict() removed in 0.4.0
-      - torch
-      - openslide-python
-      - openslide-bin
-      - tifffile
-      - imagecodecs
-      - numpy
-      - pillow
-      - opencv-python
-      - matplotlib
-      - pandas
-      - pyyaml
-      - requests
-      - pytest
+      - torch==2.12.1
+      - openslide-python==1.4.6
+      - openslide-bin==4.0.1.2
+      - tifffile==2026.6.1
+      - imagecodecs==2026.6.6
+      - numpy==2.4.2
+      - pillow==12.2.0
+      - opencv-python==4.13.0
+      - matplotlib==3.11.0
+      - pandas==2.2.3
+      - pyyaml==6.0.3
+      - requests==2.34.2
+      - pytest==9.1.1

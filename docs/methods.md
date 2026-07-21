@@ -5,7 +5,7 @@
 The research question is whether replacing SVS with IDC DICOM changes GrandQC output. The
 comparison therefore varies **only** the input format and holds everything else constant:
 the fork commit, both model checkpoints, MPP (10 for tissue, 1.5 for artifact), patch size
-(512), and the metric code (`src/utils.py`).
+(512), and the metric code (`grandqc_idc.metrics`).
 
 ```
 IDC DICOM ──wsidicom──┐
@@ -19,7 +19,7 @@ GDC SVS ──OpenSlide───┘
 A claim about IDC needs a reference from *outside* IDC, or it is circular. The original
 Aperio `.svs` files live in the **GDC** (Genomic Data Commons) — an independent archive, and
 the exact files the Zenodo masks were computed from. The Zenodo mask filename embeds the
-source `.svs` filename, so each barcode resolves to its GDC file (`src/download_gdc_svs.py`).
+source `.svs` filename, so each barcode resolves to its GDC file (`grandqc_idc.gdc_svs_by_barcode`).
 Transcoding the DICOM into SVS would defeat the test — the pixels would still be the DICOM's.
 
 ## Reader routing (the crux)
@@ -32,7 +32,7 @@ because OpenSlide opens YBR_ICT DICOM *without raising* and silently mis-decodes
 
 ## Metrics
 
-Defined once in `src/utils.py`, tested in `tests/test_metrics.py`:
+Defined once in `grandqc_idc.metrics`, tested in `tests/test_metrics.py`:
 
 - **Whole-image agreement** — % equal label over the common non-margin area.
 - **Within-shared-tissue agreement** — % equal label where both masks call tissue (1–6);

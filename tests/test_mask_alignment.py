@@ -3,14 +3,11 @@
 Silent resizing is how a spatial misalignment hides behind a good-looking agreement %.
 The comparison code crops to the common area; these tests pin the expected behavior.
 """
-import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from utils import MaskShapeMismatch, agreement  # noqa: E402
+from grandqc_idc import MaskShapeMismatch, agreement  # noqa: E402
 
 
 def test_mismatched_shapes_raise_by_default():

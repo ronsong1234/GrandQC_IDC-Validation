@@ -4,16 +4,7 @@ Guards the root-cause bug of the whole project: OpenSlide 4.0.1 silently mis-dec
 YBR_ICT JPEG 2000 DICOM, so DICOM must never be routed to OpenSlide. This test encodes the
 routing contract without needing the heavy readers installed.
 """
-import os
-
-
-def route_reader(path: str) -> str:
-    """Mirror of GrandQC open_slide() dispatch: DICOM series (dir with .dcm) -> wsidicom."""
-    if os.path.isdir(path):
-        return "wsidicom"
-    if path.lower().endswith(".dcm"):
-        return "wsidicom"
-    return "openslide"
+from grandqc_idc import route_reader
 
 
 def test_dicom_directory_routes_to_wsidicom(tmp_path):

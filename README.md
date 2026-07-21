@@ -17,7 +17,7 @@ investigation.
 1. **SVS–DICOM equivalence.** Running the identical GrandQC pipeline (same code, weights,
    MPP) on IDC DICOM and on the original GDC SVS produces masks that agree at
    **99.957 % whole-image** and **99.988 % within shared tissue** (mean tissue-weighted
-   Dice 0.9996 between the two formats; 5-slide set, computed by `src/utils.py`). Inference
+   Dice 0.9996 between the two formats; 5-slide set, computed by `grandqc_idc.metrics`). Inference
    is deterministic — GrandQC rerun on the *same* input is **byte-identical**
    (`np.array_equal == True`) — so the tiny SVS-vs-DICOM difference is a real, negligible
    codec-level effect (±1 grey-level decode floor), not run-to-run noise.
@@ -61,35 +61,50 @@ because the public GrandQC release does not reproduce them (Finding 3).
 ## Quick start
 
 ```bash
-conda env create -f environment.yml && conda activate grandqc-idc
-# or: pip install -r requirements-lock.txt
+pip install -e ".[all]"          # installs the grandqc_idc package + all extras
+# or, lightweight (metrics/tests only): pip install -e .
+# or the exact pinned env:         pip install -r requirements-lock.txt && pip install -e . --no-deps
 
-# clone the IDC-patched GrandQC fork used by the run scripts, PINNED to the
-# validated commit (the branch is a moving target; the commit is what was tested)
+# clone the IDC-patched GrandQC fork used for inference, PINNED to the validated
+# commit (the branch is a moving target; the commit is what was tested)
 git clone https://github.com/fedorov/grandqc.git external/grandqc
 git -C external/grandqc checkout 1d9807be7b3a04de2f0cc5d799b55d9fd961f01e
 
-pytest tests/ -q            # 19 tests, ~0.2 s, no data required
+pytest tests/ -q                 # 20 tests, ~1 s, no data required
 ```
 
-### Command-line workflow (no notebook required)
+### Command-line tools
+
+Installing the package registers three console scripts:
 
 ```bash
-# 1. acquire one slide from each archive
-python src/download_idc_dicom.py --barcode TCGA-AC-A23G-01Z-00-DX1 --out-dir data/idc
-python src/download_gdc_svs.py  --svs-filename "TCGA-AC-A23G-01Z-00-DX1.<UUID>.svs" \
-                                --barcode TCGA-AC-A23G-01Z-00-DX1 --out-dir data/gdc
+# compare two masks (whole-image / within-tissue agreement, IoU, Dice)
+grandqc-compare --mask-a results/dicom/.../mask.png --mask-b results/svs/.../mask.png
 
-# 2. run GrandQC on each (same models, MPP; different reader)
-python src/run_grandqc_dicom.py --dicom-dir data/idc --output-dir results/dicom/TCGA-AC-A23G
-python src/run_grandqc_svs.py   --svs-file data/gdc/TCGA-AC-A23G-01Z-00-DX1.svs \
-                                --output-dir results/svs/TCGA-AC-A23G
+# three-panel difference figure
+grandqc-overlay --mask-a A.png --mask-b B.png --out diff.png --label-a "IDC DICOM" --label-b "SVS"
 
-# 3. compare
-python src/compare_masks.py \
-    --mask-a results/dicom/TCGA-AC-A23G/mask_qc/TCGA-AC-A23G-01Z-00-DX1_mask.png \
-    --mask-b results/svs/TCGA-AC-A23G/mask_qc/TCGA-AC-A23G-01Z-00-DX1.svs_mask.png
+# YBR_ICT prevalence for a collection (reads DICOM headers, no pixel download)
+grandqc-inspect-headers --collection tcga_brca --transfer-syntax "JPEG 2000"
 ```
+
+### Python API (the matched SVS-vs-DICOM flow)
+
+```python
+from grandqc_idc import (gdc_svs_by_barcode, gdc_download,
+                         run_grandqc_dicom, run_grandqc_svs, compare)
+
+SCRIPTS = "external/grandqc/01_WSI_inference_OPENSLIDE_QC"
+bc = "TCGA-AC-A23G-01Z-00-DX1"
+
+svs = gdc_download(gdc_svs_by_barcode(bc)["file_id"], f"data/gdc/{bc}.svs")   # original .svs
+run_grandqc_dicom("data/idc", "results/dicom", SCRIPTS)   # DICOM -> wsidicom
+run_grandqc_svs(svs, "results/svs", SCRIPTS)              # .svs  -> OpenSlide
+print(compare(f"results/dicom/mask_qc/{bc}_mask.png",
+              f"results/svs/mask_qc/{bc}.svs_mask.png"))   # format-equivalence
+```
+
+(IDC DICOM download uses `grandqc_idc.idc.download_dicom`, which needs the `idc` extra.)
 
 ---
 
@@ -97,8 +112,8 @@ python src/compare_masks.py \
 
 Each notebook states its purpose, inputs, expected outputs, environment, runtime, and GPU
 need at the top, and exports results to CSV/JSON at the end. Every notebook opens with an
-**Open in Colab** badge and self-bootstraps there (installs deps, clones this repo for
-`src/`, and pins the GrandQC fork to the validated commit) — no local setup needed.
+**Open in Colab** badge and self-bootstraps there (installs the `grandqc_idc` package and
+deps, pins the GrandQC fork to the validated commit) — no local setup needed.
 
 | Notebook | What it does | Status |
 |----------|--------------|--------|
@@ -118,7 +133,8 @@ need at the top, and exports results to CSV/JSON at the end. Every notebook open
 ## Repository layout
 
 ```
-src/          command-line pipeline (query, download, run, compare, overlays, utils)
+grandqc_idc/  installable package: codebook, metrics, readers, provenance, idc, overlays, cli
+pyproject.toml  package metadata + console-script entry points
 notebooks/    explanatory notebooks (01-05)
 config/       cohort CSVs + pipeline_config.yaml
 manifests/    model / slide / environment / provenance manifests (with SHA-256)
@@ -131,9 +147,9 @@ docs/         methods, findings, limitations, dashboard integration
 ## Data policy
 
 Large files (SVS, DICOM, `.pth`, Zenodo `.tar`, big masks) are **not committed** — see
-`.gitignore`. The `src/` scripts download them on demand; `results/example_outputs/` holds
-a few small masks and difference maps for illustration. All heavy artifacts are pinned by
-checksum in `manifests/`.
+`.gitignore`. The package/notebooks download them on demand; `results/example_outputs/`
+holds a few small masks and difference maps for illustration. All heavy artifacts are
+pinned by checksum in `manifests/`.
 
 ## License & citation
 

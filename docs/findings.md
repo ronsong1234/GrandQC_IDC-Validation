@@ -7,7 +7,7 @@ come from the validated demo set; the header sweep covers all 1,104 TCGA-BRCA DX
 
 Running the identical GrandQC pipeline (same fork commit, same published weights, MPP 1.5,
 same 512 patches) on IDC DICOM vs the original GDC SVS. All values computed by
-`src/utils.py` (the canonical metric implementation); reproduced in
+`grandqc_idc.metrics` (the canonical metric implementation); reproduced in
 `results/summary_tables/five_slide_equivalence.csv`.
 
 | Slide | Photometric | Whole-image | Within-shared-tissue | TW-Dice |

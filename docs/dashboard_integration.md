@@ -16,17 +16,17 @@ that ingests IDC DICOM must use the `DicomSlide`/`wsidicom` reader path.
 
 ## What the dashboard can reuse from here
 
-- **`src/utils.py`** — the mask codebook and metric functions (single source of truth). The
+- **`grandqc_idc` (the package)** — the mask codebook and metric functions (single source of truth). The
   dashboard's per-slide QC summary should compute tissue % and per-class % from the same
   `TISSUE_CLASSES` / `BACK_CLASS` / margin conventions, so numbers match across tools.
-- **`src/compare_masks.py`** — if the dashboard ever offers an SVS-vs-DICOM check for a user
+- **`grandqc-compare` / `grandqc_idc.compare`** — if the dashboard ever offers an SVS-vs-DICOM check for a user
   slide, this is the drop-in comparison.
 - **`manifests/`** — pin the same model SHA-256s so the dashboard provably runs the
   validated weights.
 
 ## What to surface to dashboard users
 
-- A per-slide **codec/photometric badge** (`src/inspect_dicom_headers.py` logic): flag
+- A per-slide **codec/photometric badge** (`grandqc_idc.photometric_for_series`): flag
   YBR_ICT slides so users know they *require* the wsidicom path.
 - The **matched-baseline framing**: if the dashboard shows agreement against any reference,
   label it "computational equivalence to GrandQC," not "accuracy" (see

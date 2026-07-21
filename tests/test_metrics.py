@@ -3,13 +3,10 @@
 Guards the class of bug that produced 0.34 / 1.0 nonsense early in the project: a metric
 that silently mishandles the margin (0) or the tissue set.
 """
-import sys
-from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from utils import agreement, macro_dice, tissue_iou, tissue_mask, tw_dice  # noqa: E402
+from grandqc_idc import agreement, macro_dice, tissue_iou, tissue_mask, tw_dice  # noqa: E402
 
 
 def test_tissue_mask_excludes_margin_and_background():

@@ -29,10 +29,10 @@ Stated plainly, because the project is about reproducibility and honest referenc
 5. **YBR_ICT prevalence is cohort-specific.** The 2.6 % figure is for TCGA-BRCA diagnostic
    H&E slides. Other IDC collections were converted at different times with different tools
    and may have entirely different codec/photometric distributions. Do not generalize the
-   rate; re-measure per collection with `src/inspect_dicom_headers.py`.
+   rate; re-measure per collection with `grandqc-inspect-headers`.
 
 6. **Scope of the equivalence numbers.** The headline **99.957 % / 99.988 %** figures are
-   from the **5-slide** validated set (Notebook 02), computed by `src/utils.py`. The
+   from the **5-slide** validated set (Notebook 02), computed by `grandqc_idc.metrics`. The
    22-slide stratified run (`05_stratified_validation.ipynb`) is the intended confirmation
    at larger n but **has not yet been executed** — that notebook currently contains only
    cohort-selection and setup outputs, not final cohort results. When run, its table goes to

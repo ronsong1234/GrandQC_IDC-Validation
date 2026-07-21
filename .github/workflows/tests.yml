@@ -14,10 +14,10 @@ jobs:
         with:
           python-version: "3.13"
 
-      # The tests are lightweight and data-free — only numpy/pillow/pytest are needed.
-      # (The full pipeline env in requirements-lock.txt is not required to run tests/.)
-      - name: Install test dependencies
-        run: pip install numpy pillow pytest
+      # Install the package (core deps: numpy/pillow/pydicom) plus pytest. The data-free
+      # tests exercise the metrics/codebook/routing — no heavy readers or GPU needed.
+      - name: Install package
+        run: pip install -e . pytest
 
       - name: Run tests
         run: pytest tests/ -q

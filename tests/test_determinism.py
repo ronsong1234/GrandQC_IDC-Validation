@@ -9,13 +9,10 @@ A real end-to-end determinism run (rerun GrandQC on one small DICOM twice) is ex
 GPU/model-dependent; it lives in Notebook 02. Here we (1) prove the comparison harness is
 deterministic and (2) record the measured pipeline result as a regression anchor.
 """
-import sys
-from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from utils import agreement  # noqa: E402
+from grandqc_idc import agreement  # noqa: E402
 
 # Measured on TCGA-AC-A23G, fork pipeline, CPU, rerun of identical DICOM input.
 MEASURED_SELF_AGREEMENT_PCT = 100.0000

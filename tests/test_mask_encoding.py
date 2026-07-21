@@ -2,13 +2,10 @@
 
 Guards against the 0-based/1-based confusion that mislabeled every class early on.
 """
-import sys
-from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from utils import BACK_CLASS, CLASS_NAMES, MARGIN, PALETTE, TISSUE_CLASSES, tissue_mask  # noqa: E402
+from grandqc_idc import BACK_CLASS, CLASS_NAMES, MARGIN, PALETTE, TISSUE_CLASSES, tissue_mask  # noqa: E402
 
 
 def test_codebook_constants():

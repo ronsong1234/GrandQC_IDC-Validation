@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grandqc-idc"
+version = "0.1.0"
+description = "Reproducible quality-control validation for GrandQC on IDC DICOM whole-slide images"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Ronak Singh" }]
+keywords = ["digital-pathology", "quality-control", "DICOM", "whole-slide-imaging",
+            "imaging-data-commons", "grandqc", "reproducibility"]
+
+# Core: just the mask codebook + metrics + provenance helpers (numpy/pillow/pydicom).
+# Heavy pieces (readers, IDC queries, plotting) are optional extras below so the
+# metrics/tests install lightweight.
+dependencies = [
+    "numpy",
+    "pillow",
+    "pydicom",
+]
+
+[project.optional-dependencies]
+# Running GrandQC and reading slides (the .svs baseline arm needs openslide).
+run = ["torch", "segmentation-models-pytorch==0.3.1", "openslide-python", "openslide-bin"]
+# IDC index queries / DICOM download.
+idc = ["idc-index"]
+# Difference-overlay figures.
+plot = ["matplotlib"]
+# Everything, incl. test/dev tooling.
+all = ["torch", "segmentation-models-pytorch==0.3.1", "openslide-python", "openslide-bin",
+       "idc-index", "matplotlib", "pytest"]
+
+[project.urls]
+Repository = "https://github.com/ronsong1234/GrandQC_IDC-Validation"
+
+[project.scripts]
+grandqc-compare = "grandqc_idc.cli:compare_main"
+grandqc-overlay = "grandqc_idc.cli:overlay_main"
+grandqc-inspect-headers = "grandqc_idc.cli:inspect_headers_main"
+
+[tool.setuptools]
+packages = ["grandqc_idc"]

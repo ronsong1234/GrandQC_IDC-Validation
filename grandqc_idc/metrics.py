@@ -1,36 +1,23 @@
-"""Shared utilities: mask I/O, the GrandQC codebook, and comparison metrics.
+"""Mask I/O and comparison metrics — the canonical implementation for the whole project.
 
-The metric conventions here are the single source of truth for the whole repo and
-are covered by tests/test_metrics.py. See CODEBOOK.md for the encoding definitions.
+Covered by tests/test_metrics.py and tests/test_mask_alignment.py.
 """
 from __future__ import annotations
 
 import hashlib
+import warnings
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 
+from .codebook import BACK_CLASS, MARGIN, PALETTE, TISSUE_CLASSES
+
 Image.MAX_IMAGE_PIXELS = None
 
-# --- GrandQC artifact mask codebook (1-based; 0 = unwritten margin, not a class) ---
-CLASS_NAMES = {
-    0: "Margin (unwritten)",
-    1: "Clean tissue",
-    2: "Folds",
-    3: "Dark spots",
-    4: "Pen marks",
-    5: "Bubbles/edges",
-    6: "Out-of-focus",
-    7: "Background",
-}
-PALETTE = {
-    1: (128, 128, 128), 2: (255, 99, 71), 3: (0, 255, 0), 4: (255, 0, 0),
-    5: (255, 0, 255), 6: (75, 0, 130), 7: (255, 255, 255),
-}
-BACK_CLASS = 7
-MARGIN = 0
-TISSUE_CLASSES = (1, 2, 3, 4, 5, 6)
+
+class MaskShapeMismatch(ValueError):
+    """Two masks that should align have different shapes."""
 
 
 def sha256(path: str | Path) -> str:
@@ -54,10 +41,6 @@ def colorize(mask: np.ndarray) -> np.ndarray:
     return out
 
 
-class MaskShapeMismatch(ValueError):
-    """Two masks that should align have different shapes."""
-
-
 def _align(a: np.ndarray, b: np.ndarray, allow_crop: bool = False):
     """Return the two masks at a common shape.
 
@@ -74,7 +57,6 @@ def _align(a: np.ndarray, b: np.ndarray, allow_crop: bool = False):
             f"share dimensions; pass allow_crop=True only for the known padding case."
         )
     h, w = min(a.shape[0], b.shape[0]), min(a.shape[1], b.shape[1])
-    import warnings
     warnings.warn(
         f"cropping to common shape ({h}, {w}): dropped rows a={a.shape[0]-h}/b={b.shape[0]-h}, "
         f"cols a={a.shape[1]-w}/b={b.shape[1]-w} (originals {a.shape}, {b.shape})",
@@ -128,3 +110,22 @@ def macro_dice(ref: np.ndarray, pred: np.ndarray, absent_as_zero: bool = True,
         else:
             scores.append(d)
     return float(np.mean(scores)) if scores else float("nan")
+
+
+def compare(path_a: str, path_b: str, allow_crop: bool = False) -> dict:
+    """Full comparison of two mask files: shapes, agreement, IoU, Dice."""
+    a, b = load_mask(path_a), load_mask(path_b)
+    ag = agreement(a, b, allow_crop=allow_crop)
+    return {
+        "mask_a": str(path_a),
+        "mask_b": str(path_b),
+        "shape_a": list(a.shape),
+        "shape_b": list(b.shape),
+        "shapes_match": a.shape == b.shape,
+        "whole_image_pct": round(ag["whole_image"], 4),
+        "within_shared_tissue_pct": round(ag["within_shared_tissue"], 4),
+        "tissue_iou": round(tissue_iou(a, b, allow_crop=allow_crop), 4),
+        "tw_dice": round(tw_dice(a, b, allow_crop=allow_crop), 4),
+        "macro_dice_absent_as_zero": round(macro_dice(a, b, True, allow_crop=allow_crop), 4),
+        "macro_dice_present_only": round(macro_dice(a, b, False, allow_crop=allow_crop), 4),
+    }

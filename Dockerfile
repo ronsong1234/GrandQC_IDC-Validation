@@ -13,6 +13,9 @@ RUN pip install --no-cache-dir -r requirements-lock.txt
 
 COPY . .
 
+# Install the package itself (deps already pinned above; --no-deps keeps the lock).
+RUN pip install --no-cache-dir --no-deps -e .
+
 # The IDC-patched GrandQC fork is fetched at build time (not vendored), pinned to the
 # validated commit rather than the moving branch head.
 RUN git clone https://github.com/fedorov/grandqc.git external/grandqc \
